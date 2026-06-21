@@ -84,9 +84,14 @@
 | 2026-06-21 | `tsc --noEmit` | ✅ pass |
 | 2026-06-21 | `next build` | ✅ 10 routes, no errors |
 
+## Post-v1 Enhancements
+
+| Date | Change | Status |
+|---|---|---|
+| 2026-06-21 | Shareable design links (URL-encoded scenes, keyless) | ✅ |
+
 ## Known Follow-ups (v1.1)
 
 - Cloud accounts + project sync (see Schema §5)
 - Custom GLTF furniture uploads
-- Shareable project links
 - Real depth-map → mesh displacement
