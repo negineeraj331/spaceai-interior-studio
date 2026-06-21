@@ -1,7 +1,7 @@
 "use client";
 
 import { useStudio } from "@/store/studio-store";
-import { getTemplate } from "@/lib/furniture-data";
+import { resolveTemplate as getTemplate } from "@/lib/template-registry";
 
 const CAT_COLOR: Record<string, string> = {
   seating: "#3366ff",

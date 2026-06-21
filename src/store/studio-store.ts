@@ -11,7 +11,7 @@ import type {
   SavedProject,
   Vec3,
 } from "@/types";
-import { getTemplate } from "@/lib/furniture-data";
+import { resolveTemplate as getTemplate } from "@/lib/template-registry";
 import { uid, clamp, snap as snapVal } from "@/lib/utils";
 import type { DecodedScene } from "@/lib/share";
 

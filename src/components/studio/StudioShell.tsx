@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useStudio } from "@/store/studio-store";
+import { useCustomFurniture } from "@/store/custom-furniture-store";
 import { saveProject } from "@/lib/projects";
 import { downloadDataUrl, downloadJson } from "@/lib/utils";
 import { encodeScene, decodeScene } from "@/lib/share";
@@ -33,6 +34,12 @@ export default function StudioShell() {
   const hydrate = useStudio((s) => s.hydrate);
   const serialize = useStudio((s) => s.serialize);
   const loadShared = useStudio((s) => s.loadShared);
+  const hydrateCustom = useCustomFurniture((s) => s.hydrate);
+
+  // Load custom uploaded models (IndexedDB) so placed customs resolve after reload.
+  useEffect(() => {
+    hydrateCustom();
+  }, [hydrateCustom]);
 
   useEffect(() => {
     // A ?d= param means we opened a shared design — load it instead of autosave.

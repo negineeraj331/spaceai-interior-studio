@@ -1,7 +1,7 @@
 "use client";
 
 import { useStudio } from "@/store/studio-store";
-import { getTemplate } from "@/lib/furniture-data";
+import { resolveTemplate as getTemplate } from "@/lib/template-registry";
 import { Copy, Trash2, RotateCw, Lock, Unlock, MousePointer2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ColorField, Slider } from "./controls";

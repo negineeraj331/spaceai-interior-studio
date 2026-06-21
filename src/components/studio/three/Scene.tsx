@@ -12,11 +12,13 @@ import {
 } from "@react-three/drei";
 import * as THREE from "three";
 import { useStudio, applySnap } from "@/store/studio-store";
-import { getTemplate } from "@/lib/furniture-data";
+import { useCustomFurniture } from "@/store/custom-furniture-store";
+import { resolveTemplate } from "@/lib/template-registry";
 import type { SceneObject, Vec3, CameraPreset } from "@/types";
 import { Room } from "./Room";
 import { Lighting } from "./Lighting";
 import { FurnitureMesh } from "./FurnitureMesh";
+import { GltfModel } from "./GltfModel";
 
 const PRESET_POS: Record<CameraPreset, Vec3> = {
   perspective: [6, 5, 7],
@@ -34,8 +36,10 @@ function ObjectView({
   selected: boolean;
   onSelect: (id: string) => void;
 }) {
-  const tpl = getTemplate(obj.templateId);
+  const tpl = resolveTemplate(obj.templateId);
   if (!tpl) return null;
+
+  const primitive = <FurnitureMesh spec={tpl.primitive} color={obj.color} />;
 
   return (
     <group
@@ -54,7 +58,11 @@ function ObjectView({
         document.body.style.cursor = "auto";
       }}
     >
-      <FurnitureMesh spec={tpl.primitive} color={obj.color} />
+      {tpl.modelUrl ? (
+        <GltfModel url={tpl.modelUrl} targetSize={tpl.size} fallback={primitive} />
+      ) : (
+        primitive
+      )}
       {selected && <SelectionRing size={Math.max(tpl.size[0], tpl.size[2])} />}
     </group>
   );
@@ -105,6 +113,8 @@ function SceneContents() {
   const cameraPreset = useStudio((s) => s.cameraPreset);
   const select = useStudio((s) => s.select);
   const updateObject = useStudio((s) => s.updateObject);
+  // Re-render placed objects once custom models finish registering after reload.
+  useCustomFurniture((s) => s.templates.length);
 
   const [dragging, setDragging] = useState(false);
   const proxyRef = useRef<THREE.Group>(null);
