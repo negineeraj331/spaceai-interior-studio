@@ -89,6 +89,7 @@
 | Date | Change | Status |
 |---|---|---|
 | 2026-06-21 | Shareable design links (URL-encoded scenes, keyless) | ✅ |
+| 2026-06-22 | Custom GLTF/GLB furniture uploads (IndexedDB + URL, auto-fit, fallback) | ✅ |
 
 ## Known Follow-ups (v1.1)
 
