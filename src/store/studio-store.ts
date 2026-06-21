@@ -13,6 +13,7 @@ import type {
 } from "@/types";
 import { getTemplate } from "@/lib/furniture-data";
 import { uid, clamp, snap as snapVal } from "@/lib/utils";
+import type { DecodedScene } from "@/lib/share";
 
 const STORAGE_KEY = "spaceai:autosave";
 
@@ -82,6 +83,7 @@ interface StudioState {
   autoArrange: () => void;
   clearScene: () => void;
   loadProject: (p: SavedProject) => void;
+  loadShared: (d: DecodedScene) => void;
   serialize: () => SavedProject;
 
   undo: () => void;
@@ -281,6 +283,31 @@ export const useStudio = create<StudioState>((set, get) => ({
       lighting: p.lighting,
       analysis: p.analysis ?? null,
       photoUrl: p.photoUrl ?? null,
+      selectedId: null,
+      past: [],
+      future: [],
+    });
+    get().persist();
+  },
+
+  loadShared: (d) => {
+    // Rehydrate template-derived fields (name, category) from the catalog.
+    const objects: SceneObject[] = d.objects.map((o) => {
+      const tpl = getTemplate(o.templateId);
+      return {
+        ...o,
+        uid: uid("obj"),
+        name: tpl?.name ?? "Item",
+        category: tpl?.category ?? "decor",
+      };
+    });
+    set({
+      projectName: d.name,
+      room: d.room,
+      lighting: d.lighting,
+      objects,
+      photoUrl: d.photoUrl ?? null,
+      analysis: null,
       selectedId: null,
       past: [],
       future: [],

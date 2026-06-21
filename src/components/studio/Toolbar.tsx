@@ -16,6 +16,7 @@ import {
   Camera,
   FileDown,
   Eye,
+  Share2,
 } from "lucide-react";
 import { useStudio } from "@/store/studio-store";
 import { cn } from "@/lib/utils";
@@ -38,10 +39,12 @@ export default function Toolbar({
   onSave,
   onScreenshot,
   onExport,
+  onShare,
 }: {
   onSave: () => void;
   onScreenshot: () => void;
   onExport: () => void;
+  onShare: () => void;
 }) {
   const projectName = useStudio((s) => s.projectName);
   const setProjectName = useStudio((s) => s.setProjectName);
@@ -145,6 +148,9 @@ export default function Toolbar({
         </ToolBtn>
         <ToolBtn onClick={onExport} title="Export JSON">
           <FileDown className="h-4 w-4" />
+        </ToolBtn>
+        <ToolBtn onClick={onShare} title="Copy share link">
+          <Share2 className="h-4 w-4" />
         </ToolBtn>
         <button onClick={onSave} className="btn-primary px-3 py-1.5 text-xs">
           <Save className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Save</span>

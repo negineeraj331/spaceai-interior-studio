@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useStudio } from "@/store/studio-store";
 import { saveProject } from "@/lib/projects";
 import { downloadDataUrl, downloadJson } from "@/lib/utils";
+import { encodeScene, decodeScene } from "@/lib/share";
 import Toolbar from "./Toolbar";
 import FurnitureCatalog from "./FurnitureCatalog";
 import RightPanel from "./RightPanel";
@@ -31,10 +32,23 @@ export default function StudioShell() {
 
   const hydrate = useStudio((s) => s.hydrate);
   const serialize = useStudio((s) => s.serialize);
+  const loadShared = useStudio((s) => s.loadShared);
 
   useEffect(() => {
+    // A ?d= param means we opened a shared design — load it instead of autosave.
+    const params = new URLSearchParams(window.location.search);
+    const shared = params.get("d");
+    if (shared) {
+      const decoded = decodeScene(shared);
+      if (decoded) {
+        loadShared(decoded);
+        // Clean the URL so a refresh doesn't re-import over later edits.
+        window.history.replaceState({}, "", window.location.pathname);
+        return;
+      }
+    }
     hydrate();
-  }, [hydrate]);
+  }, [hydrate, loadShared]);
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -69,6 +83,18 @@ export default function StudioShell() {
     const project = serialize();
     downloadJson(project, `${project.name.replace(/\s+/g, "-")}.json`);
     flash("Scene exported as JSON");
+  };
+
+  const handleShare = async () => {
+    const encoded = encodeScene(serialize());
+    const url = `${window.location.origin}/studio?d=${encoded}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      flash("Share link copied to clipboard");
+    } catch {
+      // Clipboard blocked (e.g. insecure context) — fall back to a prompt.
+      window.prompt("Copy your share link:", url);
+    }
   };
 
   // Keyboard shortcuts
@@ -120,7 +146,12 @@ export default function StudioShell() {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden bg-ink-950">
-      <Toolbar onSave={handleSave} onScreenshot={handleScreenshot} onExport={handleExport} />
+      <Toolbar
+        onSave={handleSave}
+        onScreenshot={handleScreenshot}
+        onExport={handleExport}
+        onShare={handleShare}
+      />
 
       <div className="flex min-h-0 flex-1">
         {/* Left: catalog */}
