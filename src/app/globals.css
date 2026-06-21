@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink-950 text-slate-200 antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+  background: rgba(51, 102, 255, 0.35);
+}
+
+/* Slim, dark scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #27314a;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a4663;
+  background-clip: content-box;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-6;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/70
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400
+      hover:shadow-brand-400/30 active:scale-[0.98];
+  }
+  .btn-ghost {
+    @apply btn bg-white/5 text-slate-200 ring-1 ring-inset ring-white/10 hover:bg-white/10;
+  }
+  .btn-accent {
+    @apply btn bg-accent-500 text-ink-950 shadow-lg shadow-accent-500/25 hover:bg-accent-400 active:scale-[0.98];
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur;
+  }
+
+  .panel {
+    @apply border border-white/10 bg-ink-900/80 backdrop-blur-xl;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-white/10 bg-ink-800/80 px-3 py-2 text-sm text-slate-100
+      placeholder:text-slate-500 focus:border-brand-400/60 focus:outline-none focus:ring-1 focus:ring-brand-400/40;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1
+      text-xs font-medium text-slate-300;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-300 via-brand-400 to-accent-400 bg-clip-text text-transparent;
+  }
+
+  .kbd {
+    @apply inline-flex min-w-[1.5rem] items-center justify-center rounded-md border border-white/15
+      bg-white/5 px-1.5 py-0.5 font-mono text-[11px] font-medium text-slate-300;
+  }
+}
+
+/* Range slider styling (used across studio panels) */
+.range-input {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: #27314a;
+  outline: none;
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #3366ff;
+  cursor: pointer;
+  border: 2px solid #0b0f1a;
+  box-shadow: 0 0 0 1px rgba(51, 102, 255, 0.4);
+}
+.range-input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #3366ff;
+  cursor: pointer;
+  border: 2px solid #0b0f1a;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+}
