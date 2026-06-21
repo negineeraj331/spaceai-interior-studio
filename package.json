@@ -1,0 +1,36 @@
+{
+  "name": "spaceai-interior-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Interior Design Studio — photo to editable 3D room with AI layouts & redesigns",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.114.0",
+    "@react-three/fiber": "^8.17.10",
+    "cloudinary": "^2.5.1",
+    "framer-motion": "^11.11.9",
+    "lucide-react": "^0.453.0",
+    "next": "14.2.15",
+    "openai": "^4.68.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "replicate": "^0.34.1",
+    "three": "^0.169.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.169.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.3"
+  }
+}
