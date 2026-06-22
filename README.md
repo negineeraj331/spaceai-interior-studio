@@ -5,6 +5,8 @@
 **Upload a photo of your room → AI rebuilds it in 3D → drag in furniture, recolor walls,
 rearrange the layout, and generate photorealistic redesigns — all in the browser.**
 
+🔗 **Live demo: [spaceai-interior-studio.vercel.app](https://spaceai-interior-studio.vercel.app)**
+
 Next.js 14 · TypeScript · Three.js (R3F) · Tailwind · GPT-4 Vision · Stable Diffusion · Cloudinary
 
 </div>
@@ -22,6 +24,7 @@ Next.js 14 · TypeScript · Three.js (R3F) · Tailwind · GPT-4 Vision · Stable
 - **Stable Diffusion redesigns** — photorealistic restyles (Scandinavian, Industrial, Japandi, …) via Replicate SDXL.
 - **Live cost estimate** — a running total in the toolbar opens an itemized, category-grouped receipt so you know the spend before you buy.
 - **Live materials & lighting** — recolor walls/floors, switch flooring, sweep time-of-day.
+- **Dimension overlay** — toggle measurements for the room and the selected piece to check what fits.
 - **Undo/redo, snap, grid, camera presets, minimap, keyboard shortcuts.**
 - **Save / reopen / export** — local project gallery, JSON export, PNG screenshots.
 - **Polished marketing site** — hero with live 3D, features, pricing, FAQ, and more.

@@ -18,7 +18,7 @@
 | M5 Studio UI | ✅ | Toolbar, panels, catalog, minimap, shell |
 | M6 Marketing | ✅ | 10 sections, animated |
 | M7 Pages & Polish | ✅ | studio + gallery; build green |
-| M8 Repo & Deploy | 🟡 | repo + CI done; Vercel import pending user |
+| M8 Repo & Deploy | ✅ | Live at spaceai-interior-studio.vercel.app (add prod env vars for live AI) |
 
 ## Task Checklist
 
@@ -92,6 +92,8 @@
 | 2026-06-22 | Custom GLTF/GLB furniture uploads (IndexedDB + URL, auto-fit, fallback) | ✅ |
 | 2026-06-22 | One-click room starter templates (4 designed rooms) + empty-state hint | ✅ |
 | 2026-06-22 | Live cost estimate (toolbar total + itemized receipt dialog) | ✅ |
+| 2026-06-22 | Dimension overlay (room + selected-item measurements, toggleable) | ✅ |
+| 2026-06-22 | Deployed to Vercel + live AI keys verified (Cloudinary live; OpenAI/Replicate valid, need credit) | ✅ |
 
 ## Known Follow-ups (v1.1)
 
