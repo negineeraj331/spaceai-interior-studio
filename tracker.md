@@ -98,6 +98,8 @@
 | 2026-06-22 | Room templates expanded 4→9 (Kitchen, Bathroom, Patio, Theater, Studio) | ✅ |
 | 2026-06-22 | Auth: /login + /register pages with client-side accounts + navbar account menu | ✅ |
 | 2026-06-22 | Account-scoped projects (per-user gallery buckets + guest migration) | ✅ |
+| 2026-06-22 | Multi-select + group move/rotate/scale/delete/duplicate (shift-click, ⌘A) | ✅ |
+| 2026-06-22 | Shopping-list CSV export from the cost estimate | ✅ |
 
 ## Known Follow-ups (v1.1)
 
