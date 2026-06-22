@@ -11,7 +11,7 @@
 | Milestone | Status | Notes |
 |---|---|---|
 | M0 Foundation | ✅ | Next.js 14, TS strict, Tailwind tokens |
-| M1 Data & Catalog | ✅ | 26 items / 8 categories |
+| M1 Data & Catalog | ✅ | 52 items / 12 categories |
 | M2 State | ✅ | Zustand + history + autosave + auto-arrange |
 | M3 AI & Media | ✅ | 4 routes, all mock-capable |
 | M4 3D Engine | ✅ | Room, meshes, lighting, gizmo, snap, cameras |
@@ -94,6 +94,7 @@
 | 2026-06-22 | Live cost estimate (toolbar total + itemized receipt dialog) | ✅ |
 | 2026-06-22 | Dimension overlay (room + selected-item measurements, toggleable) | ✅ |
 | 2026-06-22 | Deployed to Vercel + live AI keys verified (Cloudinary live; OpenAI/Replicate valid, need credit) | ✅ |
+| 2026-06-22 | Catalog expanded 26→52 pieces; +4 categories (Kitchen, Bathroom, Outdoor, Electronics) | ✅ |
 
 ## Known Follow-ups (v1.1)
 

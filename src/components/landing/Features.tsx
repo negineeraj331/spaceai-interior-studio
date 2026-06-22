@@ -21,7 +21,7 @@ const FEATURES = [
   {
     icon: Move3d,
     title: "Drag-and-drop furniture",
-    body: "Place, move, rotate and scale 30+ furniture models in real time with snapping and transform gizmos.",
+    body: "Place, move, rotate and scale 50+ furniture models across 12 categories with snapping and transform gizmos.",
   },
   {
     icon: Wand2,

@@ -16,7 +16,7 @@ const HeroPreview = dynamic(() => import("./HeroPreview"), {
 const STATS = [
   { value: "12K+", label: "Rooms designed" },
   { value: "60s", label: "Photo → 3D" },
-  { value: "30+", label: "Furniture models" },
+  { value: "50+", label: "Furniture models" },
 ];
 
 export default function Hero() {

@@ -20,7 +20,7 @@ const FAQS = [
   },
   {
     q: "Can I use my own furniture?",
-    a: "The Studio plan supports custom GLTF furniture uploads. Free and Pro plans include our growing catalog of 30+ models across every category.",
+    a: "The Studio plan supports custom GLTF furniture uploads. Free and Pro plans include our growing catalog of 50+ models across 12 categories.",
   },
   {
     q: "Where are my projects stored?",
