@@ -91,6 +91,7 @@
 | 2026-06-21 | Shareable design links (URL-encoded scenes, keyless) | ✅ |
 | 2026-06-22 | Custom GLTF/GLB furniture uploads (IndexedDB + URL, auto-fit, fallback) | ✅ |
 | 2026-06-22 | One-click room starter templates (4 designed rooms) + empty-state hint | ✅ |
+| 2026-06-22 | Live cost estimate (toolbar total + itemized receipt dialog) | ✅ |
 
 ## Known Follow-ups (v1.1)
 

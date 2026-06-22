@@ -20,6 +20,7 @@ Next.js 14 · TypeScript · Three.js (R3F) · Tailwind · GPT-4 Vision · Stable
 - **Room starter templates** — begin from a fully-furnished Living Room, Bedroom, Home Office, or Dining Room in one click.
 - **AI auto-arrange** — one click lays out your furniture into a balanced plan.
 - **Stable Diffusion redesigns** — photorealistic restyles (Scandinavian, Industrial, Japandi, …) via Replicate SDXL.
+- **Live cost estimate** — a running total in the toolbar opens an itemized, category-grouped receipt so you know the spend before you buy.
 - **Live materials & lighting** — recolor walls/floors, switch flooring, sweep time-of-day.
 - **Undo/redo, snap, grid, camera presets, minimap, keyboard shortcuts.**
 - **Save / reopen / export** — local project gallery, JSON export, PNG screenshots.
