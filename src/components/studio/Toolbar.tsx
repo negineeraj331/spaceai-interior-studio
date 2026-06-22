@@ -10,6 +10,7 @@ import {
   Redo2,
   Grid3x3,
   Magnet,
+  Ruler,
   Wand2,
   Trash2,
   Save,
@@ -62,6 +63,8 @@ export default function Toolbar({
   const toggleGrid = useStudio((s) => s.toggleGrid);
   const snap = useStudio((s) => s.snapToGrid);
   const toggleSnap = useStudio((s) => s.toggleSnap);
+  const showDimensions = useStudio((s) => s.showDimensions);
+  const toggleDimensions = useStudio((s) => s.toggleDimensions);
   const undo = useStudio((s) => s.undo);
   const redo = useStudio((s) => s.redo);
   const canUndo = useStudio((s) => s.past.length > 0);
@@ -120,6 +123,9 @@ export default function Toolbar({
           </ToolBtn>
           <ToolBtn active={snap} onClick={toggleSnap} title="Snap to grid">
             <Magnet className="h-4 w-4" />
+          </ToolBtn>
+          <ToolBtn active={showDimensions} onClick={toggleDimensions} title="Show dimensions">
+            <Ruler className="h-4 w-4" />
           </ToolBtn>
         </Group>
 

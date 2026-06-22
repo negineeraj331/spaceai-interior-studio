@@ -9,6 +9,7 @@ import {
   ContactShadows,
   Environment,
   Bounds,
+  Html,
 } from "@react-three/drei";
 import * as THREE from "three";
 import { useStudio, applySnap } from "@/store/studio-store";
@@ -77,6 +78,54 @@ function SelectionRing({ size }: { size: number }) {
   );
 }
 
+/** A floating measurement pill positioned in 3D space. */
+function DimLabel({ position, text, accent }: { position: Vec3; text: string; accent?: boolean }) {
+  return (
+    <Html position={position} center distanceFactor={10} zIndexRange={[20, 0]} pointerEvents="none">
+      <div
+        className={
+          "select-none whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-semibold shadow-md " +
+          (accent ? "bg-brand-500 text-white" : "bg-ink-950/90 text-slate-100 ring-1 ring-white/15")
+        }
+      >
+        {text}
+      </div>
+    </Html>
+  );
+}
+
+/** Width/depth measurements along two room edges. */
+function RoomDimensions({ width, depth }: { width: number; depth: number }) {
+  return (
+    <>
+      <DimLabel position={[0, 0.08, depth / 2 + 0.25]} text={`${width.toFixed(1)} m`} />
+      <DimLabel position={[width / 2 + 0.25, 0.08, 0]} text={`${depth.toFixed(1)} m`} />
+    </>
+  );
+}
+
+/** Footprint + height of the selected piece, floating above it. */
+function ObjectDimensions({
+  position,
+  size,
+  scale,
+}: {
+  position: Vec3;
+  size: Vec3;
+  scale: number;
+}) {
+  const w = (size[0] * scale).toFixed(2);
+  const d = (size[2] * scale).toFixed(2);
+  const h = (size[1] * scale).toFixed(2);
+  return (
+    <DimLabel
+      position={[position[0], position[1] + size[1] * scale + 0.35, position[2]]}
+      text={`${w} × ${d} × ${h} m`}
+      accent
+    />
+  );
+}
+
 /** Bridges drei TransformControls → Zustand, and pauses OrbitControls while dragging. */
 function Gizmo({
   targetRef,
@@ -110,6 +159,7 @@ function SceneContents() {
   const objects = useStudio((s) => s.objects);
   const selectedId = useStudio((s) => s.selectedId);
   const showGrid = useStudio((s) => s.showGrid);
+  const showDimensions = useStudio((s) => s.showDimensions);
   const cameraPreset = useStudio((s) => s.cameraPreset);
   const select = useStudio((s) => s.select);
   const updateObject = useStudio((s) => s.updateObject);
@@ -121,6 +171,7 @@ function SceneContents() {
   const { camera, controls } = useThree() as any;
 
   const selected = objects.find((o) => o.uid === selectedId) ?? null;
+  const selectedTemplate = selected ? resolveTemplate(selected.templateId) : null;
 
   // Sync proxy transform → store on gizmo change.
   const handleGizmoChange = () => {
@@ -176,6 +227,15 @@ function SceneContents() {
       {objects.map((o) => (
         <ObjectView key={o.uid} obj={o} selected={o.uid === selectedId} onSelect={select} />
       ))}
+
+      {showDimensions && <RoomDimensions width={room.width} depth={room.depth} />}
+      {showDimensions && selected && selectedTemplate && (
+        <ObjectDimensions
+          position={selected.position}
+          size={selectedTemplate.size}
+          scale={selected.scale}
+        />
+      )}
 
       {/* Invisible proxy the gizmo manipulates */}
       <group ref={proxyRef} visible={false}>

@@ -53,6 +53,7 @@ interface StudioState {
   showGrid: boolean;
   snapToGrid: boolean;
   gridSize: number;
+  showDimensions: boolean;
 
   // project / ai
   projectName: string;
@@ -73,6 +74,7 @@ interface StudioState {
   setCameraPreset: (p: CameraPreset) => void;
   toggleGrid: () => void;
   toggleSnap: () => void;
+  toggleDimensions: () => void;
 
   setRoom: (patch: Partial<RoomConfig>) => void;
   setLighting: (patch: Partial<LightingConfig>) => void;
@@ -115,6 +117,7 @@ export const useStudio = create<StudioState>((set, get) => ({
   showGrid: true,
   snapToGrid: true,
   gridSize: 0.25,
+  showDimensions: false,
 
   projectName: "Untitled Room",
   photoUrl: null,
@@ -184,6 +187,7 @@ export const useStudio = create<StudioState>((set, get) => ({
   setCameraPreset: (p) => set({ cameraPreset: p }),
   toggleGrid: () => set((s) => ({ showGrid: !s.showGrid })),
   toggleSnap: () => set((s) => ({ snapToGrid: !s.snapToGrid })),
+  toggleDimensions: () => set((s) => ({ showDimensions: !s.showDimensions })),
 
   setRoom: (patch) => {
     get().commit();
