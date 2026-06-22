@@ -14,6 +14,7 @@ import type {
 import { resolveTemplate as getTemplate } from "@/lib/template-registry";
 import { uid, clamp, snap as snapVal } from "@/lib/utils";
 import type { DecodedScene } from "@/lib/share";
+import type { RoomPreset } from "@/lib/room-presets";
 
 const STORAGE_KEY = "spaceai:autosave";
 
@@ -82,6 +83,7 @@ interface StudioState {
 
   autoArrange: () => void;
   clearScene: () => void;
+  loadPreset: (preset: RoomPreset) => void;
   loadProject: (p: SavedProject) => void;
   loadShared: (d: DecodedScene) => void;
   serialize: () => SavedProject;
@@ -272,6 +274,31 @@ export const useStudio = create<StudioState>((set, get) => ({
   clearScene: () => {
     get().commit();
     set({ objects: [], selectedId: null });
+    get().persist();
+  },
+
+  loadPreset: (preset) => {
+    get().commit();
+    const objects: SceneObject[] = preset.objects.map((o) => {
+      const tpl = getTemplate(o.templateId);
+      return {
+        uid: uid("obj"),
+        templateId: o.templateId,
+        name: tpl?.name ?? "Item",
+        category: tpl?.category ?? "decor",
+        position: o.position,
+        rotation: o.rotation ?? [0, 0, 0],
+        scale: o.scale ?? 1,
+        color: o.color ?? tpl?.defaultColor ?? "#94a3b8",
+      };
+    });
+    set((s) => ({
+      projectName: preset.name,
+      room: { ...s.room, ...preset.room },
+      lighting: { ...s.lighting, ...preset.lighting },
+      objects,
+      selectedId: null,
+    }));
     get().persist();
   },
 

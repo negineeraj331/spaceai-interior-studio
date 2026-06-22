@@ -17,6 +17,7 @@ import {
   FileDown,
   Eye,
   Share2,
+  LayoutTemplate,
 } from "lucide-react";
 import { useStudio } from "@/store/studio-store";
 import { cn } from "@/lib/utils";
@@ -40,11 +41,13 @@ export default function Toolbar({
   onScreenshot,
   onExport,
   onShare,
+  onTemplates,
 }: {
   onSave: () => void;
   onScreenshot: () => void;
   onExport: () => void;
   onShare: () => void;
+  onTemplates: () => void;
 }) {
   const projectName = useStudio((s) => s.projectName);
   const setProjectName = useStudio((s) => s.setProjectName);
@@ -130,7 +133,11 @@ export default function Toolbar({
           ))}
         </Group>
 
-        <button onClick={autoArrange} className="btn-accent ml-1 px-3 py-1.5 text-xs" title="AI auto-arrange">
+        <button onClick={onTemplates} className="btn-ghost ml-1 px-3 py-1.5 text-xs" title="Start from a template">
+          <LayoutTemplate className="h-3.5 w-3.5" /> <span className="hidden lg:inline">Templates</span>
+        </button>
+
+        <button onClick={autoArrange} className="btn-accent px-3 py-1.5 text-xs" title="AI auto-arrange">
           <Wand2 className="h-3.5 w-3.5" /> <span className="hidden lg:inline">Auto-arrange</span>
         </button>
       </div>

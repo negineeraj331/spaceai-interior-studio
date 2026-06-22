@@ -11,7 +11,8 @@ import Toolbar from "./Toolbar";
 import FurnitureCatalog from "./FurnitureCatalog";
 import RightPanel from "./RightPanel";
 import Minimap from "./Minimap";
-import { PanelLeftClose, PanelLeft, Keyboard } from "lucide-react";
+import TemplatesDialog from "./TemplatesDialog";
+import { PanelLeftClose, PanelLeft, Keyboard, LayoutTemplate, Sparkles } from "lucide-react";
 
 const Scene = dynamic(() => import("./three/Scene"), {
   ssr: false,
@@ -30,6 +31,8 @@ export default function StudioShell() {
   const [leftOpen, setLeftOpen] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const objectCount = useStudio((s) => s.objects.length);
 
   const hydrate = useStudio((s) => s.hydrate);
   const serialize = useStudio((s) => s.serialize);
@@ -158,6 +161,7 @@ export default function StudioShell() {
         onScreenshot={handleScreenshot}
         onExport={handleExport}
         onShare={handleShare}
+        onTemplates={() => setShowTemplates(true)}
       />
 
       <div className="flex min-h-0 flex-1">
@@ -200,11 +204,31 @@ export default function StudioShell() {
           </button>
 
           {showShortcuts && <ShortcutsCard onClose={() => setShowShortcuts(false)} />}
+
+          {/* First-run hint when the room is empty */}
+          {objectCount === 0 && (
+            <div className="pointer-events-none absolute inset-x-0 top-8 z-10 flex justify-center px-4">
+              <div className="pointer-events-auto max-w-md rounded-2xl border border-white/10 bg-ink-900/85 p-5 text-center shadow-2xl backdrop-blur-xl">
+                <div className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-xl bg-brand-500/15 text-brand-300">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <h3 className="font-semibold text-white">Start your design</h3>
+                <p className="mt-1 text-sm text-slate-400">
+                  Pick a starter room, add furniture from the left, or upload a photo in the AI panel.
+                </p>
+                <button onClick={() => setShowTemplates(true)} className="btn-primary mx-auto mt-4 text-sm">
+                  <LayoutTemplate className="h-4 w-4" /> Browse templates
+                </button>
+              </div>
+            </div>
+          )}
         </main>
 
         {/* Right: tabbed panels */}
         <RightPanel />
       </div>
+
+      {showTemplates && <TemplatesDialog onClose={() => setShowTemplates(false)} />}
 
       {toast && (
         <div className="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-brand-400/40 bg-ink-900/95 px-4 py-2.5 text-sm font-medium text-white shadow-xl backdrop-blur">
