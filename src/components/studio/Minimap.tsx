@@ -12,6 +12,10 @@ const CAT_COLOR: Record<string, string> = {
   decor: "#22d3ee",
   rugs: "#fb7185",
   plants: "#34d399",
+  kitchen: "#f97316",
+  bathroom: "#38bdf8",
+  outdoor: "#84cc16",
+  electronics: "#e879f9",
 };
 
 /** Lightweight top-down 2D plan of the room and its furniture footprints. */

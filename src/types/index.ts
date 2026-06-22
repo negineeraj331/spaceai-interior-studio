@@ -12,7 +12,11 @@ export type FurnitureCategory =
   | "lighting"
   | "decor"
   | "rugs"
-  | "plants";
+  | "plants"
+  | "kitchen"
+  | "bathroom"
+  | "outdoor"
+  | "electronics";
 
 /** A catalog template — the "blueprint" for a piece of furniture. */
 export interface FurnitureTemplate {

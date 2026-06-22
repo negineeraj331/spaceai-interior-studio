@@ -10,6 +10,10 @@ import {
   Frame,
   Square,
   Sprout,
+  CookingPot,
+  Bath,
+  Umbrella,
+  Tv,
   Plus,
   Search,
   Box,
@@ -32,6 +36,10 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Frame,
   Square,
   Sprout,
+  CookingPot,
+  Bath,
+  Umbrella,
+  Tv,
 };
 
 export default function FurnitureCatalog() {
