@@ -74,3 +74,10 @@ export function downloadJson(data: unknown, filename: string): void {
   downloadDataUrl(url, filename);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+export function downloadText(text: string, filename: string, mime = "text/plain"): void {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  downloadDataUrl(url, filename);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

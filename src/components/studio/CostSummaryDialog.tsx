@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { X, Receipt, ShoppingCart } from "lucide-react";
+import { X, Receipt, ShoppingCart, Download } from "lucide-react";
 import { useStudio } from "@/store/studio-store";
-import { computeCost } from "@/lib/pricing";
+import { computeCost, costToCsv } from "@/lib/pricing";
 import { CATEGORY_META } from "@/lib/furniture-data";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, downloadText } from "@/lib/utils";
 import type { FurnitureCategory } from "@/types";
 import type { CostLine } from "@/lib/pricing";
 
@@ -97,6 +97,22 @@ export default function CostSummaryDialog({ onClose }: { onClose: () => void }) 
               catalog price (not included in total).
             </p>
           )}
+
+          {summary.itemCount > 0 && (
+            <button
+              onClick={() =>
+                downloadText(
+                  costToCsv(summary, projectName),
+                  `${projectName.replace(/\s+/g, "-")}-shopping-list.csv`,
+                  "text/csv",
+                )
+              }
+              className="btn-ghost mt-3 w-full text-sm"
+            >
+              <Download className="h-4 w-4" /> Download shopping list (CSV)
+            </button>
+          )}
+
           <p className="mt-2 text-[11px] text-slate-600">
             Estimate based on catalog reference prices. Actual prices vary by retailer.
           </p>
