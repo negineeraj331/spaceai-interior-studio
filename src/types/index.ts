@@ -120,6 +120,7 @@ export interface RedesignResult {
 export interface SavedProject {
   id: string;
   name: string;
+  ownerId?: string; // present when saved by a signed-in user
   createdAt: number;
   updatedAt: number;
   thumbnail?: string;

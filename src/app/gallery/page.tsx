@@ -2,18 +2,26 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Box, Plus, Trash2, FolderOpen, Clock } from "lucide-react";
+import { Box, Plus, Trash2, FolderOpen, Clock, LogIn } from "lucide-react";
 import { listProjects, deleteProject } from "@/lib/projects";
 import { useStudio } from "@/store/studio-store";
+import { useAuth } from "@/store/auth-store";
 import type { SavedProject } from "@/types";
 
 export default function GalleryPage() {
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const loadProject = useStudio((s) => s.loadProject);
+  const user = useAuth((s) => s.user);
+  const hydrateAuth = useAuth((s) => s.hydrate);
 
   useEffect(() => {
+    hydrateAuth();
+  }, [hydrateAuth]);
+
+  // Re-list whenever the signed-in user changes (projects are account-scoped).
+  useEffect(() => {
     setProjects(listProjects());
-  }, []);
+  }, [user]);
 
   const handleDelete = (id: string) => {
     deleteProject(id);
@@ -38,13 +46,26 @@ export default function GalleryPage() {
 
       <main className="container-page py-12">
         <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold text-white">Your gallery</h1>
+          <h1 className="font-display text-3xl font-bold text-white">
+            {user ? `${user.name.split(" ")[0]}'s gallery` : "Your gallery"}
+          </h1>
           <p className="mt-1 text-slate-400">
             {projects.length
               ? `${projects.length} saved design${projects.length === 1 ? "" : "s"}`
               : "Saved designs live here on this device."}
           </p>
         </div>
+
+        {!user && (
+          <div className="mb-8 flex flex-col items-start justify-between gap-3 rounded-2xl border border-brand-400/30 bg-brand-500/10 p-4 sm:flex-row sm:items-center">
+            <p className="text-sm text-slate-300">
+              You&apos;re browsing as a guest. Sign in to keep your designs tied to your account.
+            </p>
+            <Link href="/login" className="btn-primary flex-none text-sm">
+              <LogIn className="h-4 w-4" /> Sign in
+            </Link>
+          </div>
+        )}
 
         {projects.length === 0 ? (
           <div className="grid place-items-center rounded-2xl border border-dashed border-white/15 bg-white/[0.02] py-24 text-center">
