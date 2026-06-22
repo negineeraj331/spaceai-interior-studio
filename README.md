@@ -17,6 +17,7 @@ Next.js 14 · TypeScript · Three.js (R3F) · Tailwind · GPT-4 Vision · Stable
 - **3D furniture editor** — 26 procedurally-modeled pieces across 8 categories; add, move, rotate, scale, duplicate, delete.
 - **Custom 3D models** — upload your own GLTF/GLB furniture (stored privately on-device via IndexedDB) or add by URL; auto-fitted to the room with a primitive fallback if a model fails to load.
 - **GPT-4 Vision analysis** — detects room type, style, palette, lighting, and suggests tailored layouts.
+- **Room starter templates** — begin from a fully-furnished Living Room, Bedroom, Home Office, or Dining Room in one click.
 - **AI auto-arrange** — one click lays out your furniture into a balanced plan.
 - **Stable Diffusion redesigns** — photorealistic restyles (Scandinavian, Industrial, Japandi, …) via Replicate SDXL.
 - **Live materials & lighting** — recolor walls/floors, switch flooring, sweep time-of-day.
