@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import StudioShell from "@/components/studio/StudioShell";
+import AuthGuard from "@/components/auth/AuthGuard";
 
 export const metadata: Metadata = {
   title: "Studio",
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function StudioPage() {
-  return <StudioShell />;
+  return (
+    <AuthGuard>
+      <StudioShell />
+    </AuthGuard>
+  );
 }
