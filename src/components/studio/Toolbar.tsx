@@ -20,7 +20,8 @@ import {
   LayoutTemplate,
 } from "lucide-react";
 import { useStudio } from "@/store/studio-store";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
+import { computeCost } from "@/lib/pricing";
 import type { TransformMode, CameraPreset } from "@/types";
 
 const MODES: { id: TransformMode; icon: React.ComponentType<{ className?: string }>; key: string }[] = [
@@ -42,12 +43,14 @@ export default function Toolbar({
   onExport,
   onShare,
   onTemplates,
+  onCost,
 }: {
   onSave: () => void;
   onScreenshot: () => void;
   onExport: () => void;
   onShare: () => void;
   onTemplates: () => void;
+  onCost: () => void;
 }) {
   const projectName = useStudio((s) => s.projectName);
   const setProjectName = useStudio((s) => s.setProjectName);
@@ -65,7 +68,9 @@ export default function Toolbar({
   const canRedo = useStudio((s) => s.future.length > 0);
   const autoArrange = useStudio((s) => s.autoArrange);
   const clearScene = useStudio((s) => s.clearScene);
-  const count = useStudio((s) => s.objects.length);
+  const objects = useStudio((s) => s.objects);
+  const count = objects.length;
+  const total = computeCost(objects).total;
 
   return (
     <header className="flex h-14 flex-none items-center justify-between gap-3 border-b border-white/10 bg-ink-900/80 px-3 backdrop-blur-xl">
@@ -144,9 +149,14 @@ export default function Toolbar({
 
       {/* Right: actions */}
       <div className="flex items-center gap-1.5">
-        <span className="hidden rounded-md bg-white/5 px-2 py-1 text-xs text-slate-400 xl:inline">
-          {count} item{count === 1 ? "" : "s"}
-        </span>
+        <button
+          onClick={onCost}
+          title="Cost estimate"
+          className="hidden items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-xs text-slate-300 hover:bg-white/10 lg:inline-flex"
+        >
+          <span className="text-slate-500">{count} item{count === 1 ? "" : "s"}</span>
+          <span className="font-semibold text-white">{formatPrice(total)}</span>
+        </button>
         <ToolBtn onClick={clearScene} title="Clear scene">
           <Trash2 className="h-4 w-4" />
         </ToolBtn>

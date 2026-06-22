@@ -12,6 +12,7 @@ import FurnitureCatalog from "./FurnitureCatalog";
 import RightPanel from "./RightPanel";
 import Minimap from "./Minimap";
 import TemplatesDialog from "./TemplatesDialog";
+import CostSummaryDialog from "./CostSummaryDialog";
 import { PanelLeftClose, PanelLeft, Keyboard, LayoutTemplate, Sparkles } from "lucide-react";
 
 const Scene = dynamic(() => import("./three/Scene"), {
@@ -32,6 +33,7 @@ export default function StudioShell() {
   const [toast, setToast] = useState<string | null>(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showCost, setShowCost] = useState(false);
   const objectCount = useStudio((s) => s.objects.length);
 
   const hydrate = useStudio((s) => s.hydrate);
@@ -162,6 +164,7 @@ export default function StudioShell() {
         onExport={handleExport}
         onShare={handleShare}
         onTemplates={() => setShowTemplates(true)}
+        onCost={() => setShowCost(true)}
       />
 
       <div className="flex min-h-0 flex-1">
@@ -229,6 +232,7 @@ export default function StudioShell() {
       </div>
 
       {showTemplates && <TemplatesDialog onClose={() => setShowTemplates(false)} />}
+      {showCost && <CostSummaryDialog onClose={() => setShowCost(false)} />}
 
       {toast && (
         <div className="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-brand-400/40 bg-ink-900/95 px-4 py-2.5 text-sm font-medium text-white shadow-xl backdrop-blur">
