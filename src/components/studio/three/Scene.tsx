@@ -35,7 +35,7 @@ function ObjectView({
 }: {
   obj: SceneObject;
   selected: boolean;
-  onSelect: (id: string) => void;
+  onSelect: (id: string, additive: boolean) => void;
 }) {
   const tpl = resolveTemplate(obj.templateId);
   if (!tpl) return null;
@@ -49,7 +49,8 @@ function ObjectView({
       scale={obj.scale}
       onClick={(e) => {
         e.stopPropagation();
-        onSelect(obj.uid);
+        const ne = e.nativeEvent as MouseEvent;
+        onSelect(obj.uid, ne.shiftKey || ne.metaKey || ne.ctrlKey);
       }}
       onPointerOver={(e) => {
         e.stopPropagation();
@@ -157,43 +158,87 @@ function SceneContents() {
   const room = useStudio((s) => s.room);
   const lighting = useStudio((s) => s.lighting);
   const objects = useStudio((s) => s.objects);
-  const selectedId = useStudio((s) => s.selectedId);
+  const selectedIds = useStudio((s) => s.selectedIds);
   const showGrid = useStudio((s) => s.showGrid);
   const showDimensions = useStudio((s) => s.showDimensions);
   const cameraPreset = useStudio((s) => s.cameraPreset);
   const select = useStudio((s) => s.select);
-  const updateObject = useStudio((s) => s.updateObject);
+  const nudgeSelected = useStudio((s) => s.nudgeSelected);
+  const rotateSelected = useStudio((s) => s.rotateSelected);
+  const scaleSelected = useStudio((s) => s.scaleSelected);
   // Re-render placed objects once custom models finish registering after reload.
   useCustomFurniture((s) => s.templates.length);
 
   const [dragging, setDragging] = useState(false);
   const proxyRef = useRef<THREE.Group>(null);
+  const lastProxy = useRef({ pos: new THREE.Vector3(), rot: new THREE.Euler(), scale: 1 });
   const { camera, controls } = useThree() as any;
 
-  const selected = objects.find((o) => o.uid === selectedId) ?? null;
-  const selectedTemplate = selected ? resolveTemplate(selected.templateId) : null;
+  const selectedSet = new Set(selectedIds);
+  const selectedObjects = objects.filter((o) => selectedSet.has(o.uid));
+  const primary = selectedObjects[0] ?? null;
+  const primaryTemplate = primary ? resolveTemplate(primary.templateId) : null;
 
-  // Sync proxy transform → store on gizmo change.
-  const handleGizmoChange = () => {
+  // Re-center the gizmo proxy on the selection's centroid with neutral orientation.
+  const resetProxy = () => {
     const p = proxyRef.current;
-    if (!p || !selected) return;
-    const pos = applySnap([p.position.x, p.position.y, p.position.z]);
-    p.position.set(pos[0], Math.max(0, pos[1]), pos[2]);
-    updateObject(selected.uid, {
-      position: [p.position.x, p.position.y, p.position.z],
-      rotation: [p.rotation.x, p.rotation.y, p.rotation.z],
-      scale: (p.scale.x + p.scale.y + p.scale.z) / 3,
-    });
+    if (!p) return;
+    const c = new THREE.Vector3();
+    const sel = useStudio.getState().objects.filter((o) => selectedSet.has(o.uid));
+    if (sel.length) {
+      sel.forEach((o) => c.add(new THREE.Vector3(...o.position)));
+      c.multiplyScalar(1 / sel.length);
+    }
+    p.position.copy(c);
+    p.rotation.set(0, 0, 0);
+    p.scale.setScalar(1);
+    lastProxy.current.pos.copy(c);
+    lastProxy.current.rot.set(0, 0, 0);
+    lastProxy.current.scale = 1;
   };
 
-  // Keep the invisible proxy aligned with the selected object.
-  useEffect(() => {
+  // Apply gizmo movement as a delta to every selected object (group transform).
+  const handleGizmoChange = () => {
     const p = proxyRef.current;
-    if (!p || !selected) return;
-    p.position.set(...selected.position);
-    p.rotation.set(...selected.rotation);
-    p.scale.setScalar(selected.scale);
-  }, [selected]);
+    if (!p) return;
+    const mode = useStudio.getState().transformMode;
+    if (mode === "translate") {
+      const snapped = applySnap([p.position.x, p.position.y, p.position.z]);
+      p.position.set(snapped[0], Math.max(0, snapped[1]), snapped[2]);
+      const d: Vec3 = [
+        p.position.x - lastProxy.current.pos.x,
+        p.position.y - lastProxy.current.pos.y,
+        p.position.z - lastProxy.current.pos.z,
+      ];
+      if (d[0] || d[1] || d[2]) nudgeSelected(d);
+      lastProxy.current.pos.copy(p.position);
+    } else if (mode === "rotate") {
+      const d: Vec3 = [
+        p.rotation.x - lastProxy.current.rot.x,
+        p.rotation.y - lastProxy.current.rot.y,
+        p.rotation.z - lastProxy.current.rot.z,
+      ];
+      if (d[0] || d[1] || d[2]) rotateSelected(d);
+      lastProxy.current.rot.copy(p.rotation);
+    } else {
+      const avg = (p.scale.x + p.scale.y + p.scale.z) / 3;
+      const ratio = avg / (lastProxy.current.scale || 1);
+      if (Math.abs(ratio - 1) > 1e-5) scaleSelected(ratio);
+      lastProxy.current.scale = avg;
+    }
+  };
+
+  const handleDragChange = (d: boolean) => {
+    setDragging(d);
+    if (d) useStudio.getState().commit(); // one undo step per drag
+    else resetProxy(); // re-center after the drag completes
+  };
+
+  // Reset the proxy whenever the selection changes.
+  useEffect(() => {
+    resetProxy();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIds.join(",")]);
 
   // Apply camera presets.
   useEffect(() => {
@@ -225,15 +270,15 @@ function SceneContents() {
       <Room room={room} />
 
       {objects.map((o) => (
-        <ObjectView key={o.uid} obj={o} selected={o.uid === selectedId} onSelect={select} />
+        <ObjectView key={o.uid} obj={o} selected={selectedSet.has(o.uid)} onSelect={select} />
       ))}
 
       {showDimensions && <RoomDimensions width={room.width} depth={room.depth} />}
-      {showDimensions && selected && selectedTemplate && (
+      {showDimensions && primary && primaryTemplate && (
         <ObjectDimensions
-          position={selected.position}
-          size={selectedTemplate.size}
-          scale={selected.scale}
+          position={primary.position}
+          size={primaryTemplate.size}
+          scale={primary.scale}
         />
       )}
 
@@ -245,8 +290,8 @@ function SceneContents() {
         </mesh>
       </group>
 
-      {selected && (
-        <Gizmo targetRef={proxyRef} onChange={handleGizmoChange} onDragChange={setDragging} />
+      {selectedObjects.length > 0 && (
+        <Gizmo targetRef={proxyRef} onChange={handleGizmoChange} onDragChange={handleDragChange} />
       )}
 
       <ContactShadows

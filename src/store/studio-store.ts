@@ -47,7 +47,7 @@ interface StudioState {
   lighting: LightingConfig;
 
   // editor ui
-  selectedId: string | null;
+  selectedIds: string[];
   transformMode: TransformMode;
   cameraPreset: CameraPreset;
   showGrid: boolean;
@@ -68,8 +68,14 @@ interface StudioState {
   addObject: (templateId: string, position?: Vec3) => void;
   removeObject: (uid: string) => void;
   duplicateObject: (uid: string) => void;
+  removeSelected: () => void;
+  duplicateSelected: () => void;
+  nudgeSelected: (delta: Vec3) => void;
+  rotateSelected: (delta: Vec3) => void;
+  scaleSelected: (ratio: number) => void;
+  selectAll: () => void;
   updateObject: (uid: string, patch: Partial<SceneObject>) => void;
-  select: (uid: string | null) => void;
+  select: (uid: string | null, additive?: boolean) => void;
   setTransformMode: (m: TransformMode) => void;
   setCameraPreset: (p: CameraPreset) => void;
   toggleGrid: () => void;
@@ -111,7 +117,7 @@ export const useStudio = create<StudioState>((set, get) => ({
   objects: [],
   lighting: DEFAULT_LIGHTING,
 
-  selectedId: null,
+  selectedIds: [],
   transformMode: "translate",
   cameraPreset: "perspective",
   showGrid: true,
@@ -149,7 +155,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       scale: 1,
       color: tpl.defaultColor,
     };
-    set({ objects: [...s.objects, obj], selectedId: obj.uid });
+    set({ objects: [...s.objects, obj], selectedIds: [obj.uid] });
     get().persist();
   },
 
@@ -157,7 +163,7 @@ export const useStudio = create<StudioState>((set, get) => ({
     get().commit();
     set((s) => ({
       objects: s.objects.filter((o) => o.uid !== id),
-      selectedId: s.selectedId === id ? null : s.selectedId,
+      selectedIds: s.selectedIds.filter((sid) => sid !== id),
     }));
     get().persist();
   },
@@ -171,9 +177,81 @@ export const useStudio = create<StudioState>((set, get) => ({
       uid: uid("obj"),
       position: [src.position[0] + 0.4, src.position[1], src.position[2] + 0.4],
     };
-    set((s) => ({ objects: [...s.objects, copy], selectedId: copy.uid }));
+    set((s) => ({ objects: [...s.objects, copy], selectedIds: [copy.uid] }));
     get().persist();
   },
+
+  removeSelected: () => {
+    const ids = new Set(get().selectedIds);
+    if (ids.size === 0) return;
+    get().commit();
+    set((s) => ({
+      objects: s.objects.filter((o) => !ids.has(o.uid)),
+      selectedIds: [],
+    }));
+    get().persist();
+  },
+
+  duplicateSelected: () => {
+    const ids = new Set(get().selectedIds);
+    if (ids.size === 0) return;
+    get().commit();
+    const s = get();
+    const copies = s.objects
+      .filter((o) => ids.has(o.uid))
+      .map<SceneObject>((src) => ({
+        ...src,
+        uid: uid("obj"),
+        position: [src.position[0] + 0.4, src.position[1], src.position[2] + 0.4],
+      }));
+    set({ objects: [...s.objects, ...copies], selectedIds: copies.map((c) => c.uid) });
+    get().persist();
+  },
+
+  nudgeSelected: (delta) => {
+    const ids = new Set(get().selectedIds);
+    if (ids.size === 0) return;
+    set((s) => ({
+      objects: s.objects.map((o) =>
+        ids.has(o.uid)
+          ? {
+              ...o,
+              position: [o.position[0] + delta[0], Math.max(0, o.position[1] + delta[1]), o.position[2] + delta[2]],
+            }
+          : o,
+      ),
+    }));
+    get().persist();
+  },
+
+  rotateSelected: (delta) => {
+    const ids = new Set(get().selectedIds);
+    if (ids.size === 0) return;
+    set((s) => ({
+      objects: s.objects.map((o) =>
+        ids.has(o.uid)
+          ? {
+              ...o,
+              rotation: [o.rotation[0] + delta[0], o.rotation[1] + delta[1], o.rotation[2] + delta[2]],
+            }
+          : o,
+      ),
+    }));
+    get().persist();
+  },
+
+  scaleSelected: (ratio) => {
+    const ids = new Set(get().selectedIds);
+    if (ids.size === 0) return;
+    set((s) => ({
+      objects: s.objects.map((o) =>
+        ids.has(o.uid) ? { ...o, scale: clamp(o.scale * ratio, 0.2, 4) } : o,
+      ),
+    }));
+    get().persist();
+  },
+
+  selectAll: () => set((s) => ({ selectedIds: s.objects.map((o) => o.uid) })),
 
   updateObject: (id, patch) => {
     set((s) => ({
@@ -182,7 +260,15 @@ export const useStudio = create<StudioState>((set, get) => ({
     get().persist();
   },
 
-  select: (id) => set({ selectedId: id }),
+  select: (id, additive = false) =>
+    set((s) => {
+      if (id === null) return { selectedIds: [] };
+      if (!additive) return { selectedIds: [id] };
+      // Toggle membership when additive (shift/ctrl-click).
+      return s.selectedIds.includes(id)
+        ? { selectedIds: s.selectedIds.filter((sid) => sid !== id) }
+        : { selectedIds: [...s.selectedIds, id] };
+    }),
   setTransformMode: (m) => set({ transformMode: m }),
   setCameraPreset: (p) => set({ cameraPreset: p }),
   toggleGrid: () => set((s) => ({ showGrid: !s.showGrid })),
@@ -277,7 +363,7 @@ export const useStudio = create<StudioState>((set, get) => ({
 
   clearScene: () => {
     get().commit();
-    set({ objects: [], selectedId: null });
+    set({ objects: [], selectedIds: [] });
     get().persist();
   },
 
@@ -301,7 +387,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       room: { ...s.room, ...preset.room },
       lighting: { ...s.lighting, ...preset.lighting },
       objects,
-      selectedId: null,
+      selectedIds: [],
     }));
     get().persist();
   },
@@ -314,7 +400,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       lighting: p.lighting,
       analysis: p.analysis ?? null,
       photoUrl: p.photoUrl ?? null,
-      selectedId: null,
+      selectedIds: [],
       past: [],
       future: [],
     });
@@ -339,7 +425,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       objects,
       photoUrl: d.photoUrl ?? null,
       analysis: null,
-      selectedId: null,
+      selectedIds: [],
       past: [],
       future: [],
     });
@@ -371,7 +457,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       room: prev.room,
       objects: prev.objects,
       lighting: prev.lighting,
-      selectedId: null,
+      selectedIds: [],
     });
     get().persist();
   },
@@ -386,7 +472,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       room: next.room,
       objects: next.objects,
       lighting: next.lighting,
-      selectedId: null,
+      selectedIds: [],
     });
     get().persist();
   },

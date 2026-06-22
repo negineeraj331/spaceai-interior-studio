@@ -133,7 +133,12 @@ export default function StudioShell() {
       }
       if (meta && e.key.toLowerCase() === "d") {
         e.preventDefault();
-        if (s.selectedId) s.duplicateObject(s.selectedId);
+        s.duplicateSelected();
+        return;
+      }
+      if (meta && e.key.toLowerCase() === "a") {
+        e.preventDefault();
+        s.selectAll();
         return;
       }
       switch (e.key.toLowerCase()) {
@@ -148,7 +153,7 @@ export default function StudioShell() {
           break;
         case "delete":
         case "backspace":
-          if (s.selectedId) s.removeObject(s.selectedId);
+          s.removeSelected();
           break;
         case "escape":
           s.select(null);
@@ -254,6 +259,8 @@ const SHORTCUTS: [string, string][] = [
   ["⌘ Z", "Undo"],
   ["⌘ ⇧ Z", "Redo"],
   ["⌘ D", "Duplicate"],
+  ["⌘ A", "Select all"],
+  ["⇧ Click", "Add to selection"],
   ["⌘ S", "Save"],
   ["Del", "Delete selected"],
   ["Esc", "Deselect"],

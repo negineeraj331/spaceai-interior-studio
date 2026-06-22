@@ -2,16 +2,52 @@
 
 import { useStudio } from "@/store/studio-store";
 import { resolveTemplate as getTemplate } from "@/lib/template-registry";
-import { Copy, Trash2, RotateCw, Lock, Unlock, MousePointer2 } from "lucide-react";
+import { Copy, Trash2, RotateCw, Lock, Unlock, MousePointer2, Boxes } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ColorField, Slider } from "./controls";
 
 export default function PropertiesPanel() {
-  const selectedId = useStudio((s) => s.selectedId);
-  const obj = useStudio((s) => s.objects.find((o) => o.uid === s.selectedId) ?? null);
+  const selectedIds = useStudio((s) => s.selectedIds);
+  const obj = useStudio((s) =>
+    s.selectedIds.length === 1 ? s.objects.find((o) => o.uid === s.selectedIds[0]) ?? null : null,
+  );
   const update = useStudio((s) => s.updateObject);
   const remove = useStudio((s) => s.removeObject);
   const duplicate = useStudio((s) => s.duplicateObject);
+  const removeSelected = useStudio((s) => s.removeSelected);
+  const duplicateSelected = useStudio((s) => s.duplicateSelected);
+
+  // Group panel when more than one object is selected.
+  if (selectedIds.length > 1) {
+    return (
+      <div className="flex-1 space-y-5 overflow-y-auto p-4">
+        <div className="flex items-center gap-3 rounded-xl border border-brand-400/30 bg-brand-500/10 p-4">
+          <div className="grid h-10 w-10 flex-none place-items-center rounded-lg bg-brand-500/20 text-brand-200">
+            <Boxes className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-semibold text-white">{selectedIds.length} items selected</p>
+            <p className="text-xs text-slate-400">Drag the gizmo to move, rotate, or scale them together.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={duplicateSelected} className="btn-ghost text-xs">
+            <Copy className="h-3.5 w-3.5" /> Duplicate all
+          </button>
+          <button
+            onClick={removeSelected}
+            className="btn text-xs bg-red-500/15 text-red-300 ring-1 ring-inset ring-red-500/30 hover:bg-red-500/25"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Delete all
+          </button>
+        </div>
+        <p className="rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs text-slate-500">
+          Tip: <kbd className="kbd">Shift</kbd>-click items to add or remove them from the selection.
+          Press <kbd className="kbd">⌘/Ctrl A</kbd> to select everything.
+        </p>
+      </div>
+    );
+  }
 
   if (!obj) {
     return (

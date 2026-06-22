@@ -22,7 +22,7 @@ const CAT_COLOR: Record<string, string> = {
 export default function Minimap() {
   const room = useStudio((s) => s.room);
   const objects = useStudio((s) => s.objects);
-  const selectedId = useStudio((s) => s.selectedId);
+  const selectedIds = useStudio((s) => s.selectedIds);
   const select = useStudio((s) => s.select);
 
   const pad = 10;
@@ -56,12 +56,12 @@ export default function Minimap() {
           const od = tpl.size[2] * o.scale * scale;
           const cx = toX(o.position[0]);
           const cy = toY(o.position[2]);
-          const isSel = o.uid === selectedId;
+          const isSel = selectedIds.includes(o.uid);
           return (
             <g
               key={o.uid}
               transform={`translate(${cx} ${cy}) rotate(${(-o.rotation[1] * 180) / Math.PI})`}
-              onClick={() => select(o.uid)}
+              onClick={(e) => select(o.uid, e.shiftKey || e.metaKey || e.ctrlKey)}
               className="cursor-pointer"
             >
               <rect
