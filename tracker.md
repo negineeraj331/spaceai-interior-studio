@@ -95,6 +95,8 @@
 | 2026-06-22 | Dimension overlay (room + selected-item measurements, toggleable) | ✅ |
 | 2026-06-22 | Deployed to Vercel + live AI keys verified (Cloudinary live; OpenAI/Replicate valid, need credit) | ✅ |
 | 2026-06-22 | Catalog expanded 26→52 pieces; +4 categories (Kitchen, Bathroom, Outdoor, Electronics) | ✅ |
+| 2026-06-22 | Room templates expanded 4→9 (Kitchen, Bathroom, Patio, Theater, Studio) | ✅ |
+| 2026-06-22 | Auth: /login + /register pages with client-side accounts + navbar account menu | ✅ |
 
 ## Known Follow-ups (v1.1)
 
